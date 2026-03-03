@@ -1,0 +1,24 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: backend
+  namespace: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend-api
+        image: docker.io/viralpatel489/my-backend:v1
+        env:
+        - name: DB_HOST
+          value: "mysql-service" # K8s DNS handles this
+        ports:
+          - containerPort: 3000
