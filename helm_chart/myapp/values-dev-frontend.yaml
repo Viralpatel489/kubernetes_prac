@@ -80,38 +80,32 @@ ingress:
 # (see: https://gateway-api.sigs.k8s.io/guides/)
 httpRoute:
   # HTTPRoute enabled.
-  enabled: false
+  enabled: true
   # HTTPRoute annotations.
   annotations: {}
   # Which Gateways this Route is attached to.
   parentRefs:
-  - name: gateway
-    sectionName: http
+  - name: my-gateway
+    namespace: gateway-infra #match with name space created
     # namespace: default
   # Hostnames matching HTTP header.
-  hostnames:
-  - chart-example.local
+  hostnames: []
   # List of rules and filters applied.
   rules:
   - matches:
     - path:
         type: PathPrefix
-        value: /headers
-  #   filters:
-  #   - type: RequestHeaderModifier
-  #     requestHeaderModifier:
-  #       set:
-  #       - name: My-Overwrite-Header
-  #         value: this-is-the-only-value
-  #       remove:
-  #       - User-Agent
-  # - matches:
-  #   - path:
-  #       type: PathPrefix
-  #       value: /echo
-  #     headers:
-  #     - name: version
-  #       value: v2
+        value: /dev
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+          
+    backendRefs:
+    - name: backend-api # this shoud be match with  frontend service name
+      port: 80
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
